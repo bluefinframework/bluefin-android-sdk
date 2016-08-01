@@ -1,0 +1,169 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+
+def siteUrl = 'https://github.com/bluefinframework/bluefin-android-sdk/'
+def gitUrl = 'https://github.com/bluefinframework/bluefin-android-sdk.git'
+version = '1.0.5'
+group = 'cn.saymagic'
+
+configurations {
+    deployerJars
+}
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.3"
+    resourcePrefix "bluefin"
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 23
+        versionCode 1
+        versionName version
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:23.2.1'
+    deployerJars 'org.apache.maven.wagon:wagon-http:2.2'
+}
+
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'aar'
+                name 'Android SDK for Bluefin server'
+                url siteUrl
+                developers {
+                    developer {
+                        id 'saymagic'
+                        name 'saymagic'
+                        email 'saymagic.dev@gmail.com'
+                    }
+                }
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+                }
+            }
+        }
+    }
+}
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+task createPom {
+    pom {
+        project {
+            packaging 'aar'
+
+            name project.name
+            description 'Android SDK for Bluefin server'
+            url siteUrl
+            inceptionYear '2016'
+
+            scm {
+                connection gitUrl
+                developerConnection gitUrl
+                url siteUrl
+            }
+            developers {
+                developer {
+                    id 'saymagic'
+                    name 'saymagic'
+                    email 'saymagic.dev@gmail.com'
+                }
+            }
+        }
+    }.writeTo("$buildDir/poms/pom-default.xml").writeTo("pom.xml")
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+build.dependsOn createPom
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+    configurations = ['archives']
+    pkg {
+        repo = "maven"
+        name = "bluefin-sdk"
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        publish = true
+    }
+}
+
+//local nexus
+
+//defined in local.properties
+def mavenRemoteUrl = ""
+def mavenUsername = ""
+def mavenPassword = ""
+
+uploadArchives {
+    repositories.mavenDeployer {
+        configuration = configurations.deployerJars
+        File f = new File(project.rootProject.projectDir, "local.properties")
+        if (f.exists()) {
+            f.eachLine {
+                if (!it.startsWith("#")) {
+                    String[] pros = it.split("=")
+                    if (pros.length == 2) {
+                        switch (pros[0]) {
+                            case "mavenRemoteUrl":
+                                mavenRemoteUrl = pros[1]
+                                break
+                            case "mavenUsername":
+                                mavenUsername = pros[1]
+                                break
+                            case "mavenPassword":
+                                mavenPassword = pros[1]
+                                break
+                        }
+                    }
+                }
+            }
+        }else{
+            println("local.properties not exist")
+        }
+
+        repository(url: "${mavenRemoteUrl}") {
+            authentication(userName: "${mavenUsername}", password: "${mavenPassword}")
+        }
+    }
+}
+
+task publish(dependsOn : uploadArchives)

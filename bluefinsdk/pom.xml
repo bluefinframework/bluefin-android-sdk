@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>cn.saymagic</groupId>
+  <artifactId>bluefinsdk</artifactId>
+  <version>1.0.5</version>
+  <packaging>aar</packaging>
+  <name>bluefinsdk</name>
+  <description>Android SDK for Bluefin server</description>
+  <url>https://github.com/bluefinframework/bluefin-android-sdk/</url>
+  <inceptionYear>2016</inceptionYear>
+  <developers>
+    <developer>
+      <id>saymagic</id>
+      <name>saymagic</name>
+      <email>saymagic.dev@gmail.com</email>
+    </developer>
+  </developers>
+  <scm>
+    <connection>https://github.com/bluefinframework/bluefin-android-sdk.git</connection>
+    <developerConnection>https://github.com/bluefinframework/bluefin-android-sdk.git</developerConnection>
+    <url>https://github.com/bluefinframework/bluefin-android-sdk/</url>
+  </scm>
+  <dependencies>
+    <dependency>
+      <groupId>com.android.support</groupId>
+      <artifactId>appcompat-v7</artifactId>
+      <version>23.2.1</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+</project>
