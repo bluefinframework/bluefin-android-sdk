@@ -68,5 +68,4 @@ public class MainActivity extends AppCompatActivity implements BluefinCallback {
         Log.i(TAG, "onSimpleUpdateJobResult-id: " + id + " result: " + String.valueOf(result) + " e: " + String.valueOf(e));
     }
 
-
 }

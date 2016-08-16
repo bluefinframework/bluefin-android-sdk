@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>cn.saymagic</groupId>
   <artifactId>bluefinsdk</artifactId>
-  <version>1.0.5</version>
+  <version>1.0.6</version>
   <packaging>aar</packaging>
   <name>bluefinsdk</name>
   <description>Android SDK for Bluefin server</description>

@@ -6,7 +6,7 @@
 ## 安装
 
 * 将bluefinsdk整个library以源码的形式引用
-* compile 'cn.saymagic:bluefinsdk:1.0.5'
+* compile 'cn.saymagic:bluefinsdk:1.0.6'
 
 ## 使用
 Bluefin SDK 对外公开的方法都在`Bluefin`类中以静态的方法提供，具体如下：

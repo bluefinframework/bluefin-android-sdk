@@ -32,11 +32,11 @@ dependencies {
     compile 'com.android.support:support-v4:23.2.1'
     compile 'com.android.support:recyclerview-v7:23.2.1'
     compile 'com.android.support:design:23.2.1'
-    compile 'cn.saymagic:bluefinsdk:1.0.5'
-//    compile project(':bluefinsdk')
+//    compile 'cn.saymagic:bluefinsdk:1.0.5'
+    compile project(':bluefinsdk')
 }
 
-bluefin{
+bluefin {
     host = 'http://10.240.141.70:2556'
     apkPath = apkPath("", "app-debug.apk")
 }
@@ -46,7 +46,7 @@ def apkPath(flavor, apkName) {
     builder.append(project.buildDir)
     builder.append(File.separator).append("outputs")
     builder.append(File.separator).append("apk")
-    if(flavor != null && !"".equals(flavor)){
+    if (flavor != null && !"".equals(flavor)) {
         builder.append(File.separator).append(flavor)
     }
     builder.append(File.separator).append(apkName)
