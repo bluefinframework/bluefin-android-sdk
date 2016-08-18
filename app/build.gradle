@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: 'bluefin-plugin'
+apply plugin: 'bluefin-gradle-plugin'
 
 android {
     compileSdkVersion 23

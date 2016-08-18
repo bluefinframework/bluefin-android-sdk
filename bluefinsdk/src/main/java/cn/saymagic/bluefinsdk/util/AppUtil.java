@@ -25,7 +25,7 @@ public class AppUtil {
         }
     }
 
-    public static String getApplicationPackageName(Context context) {
+    public static String getApplicationName(Context context) {
         PackageManager pm = context.getPackageManager();
         ApplicationInfo pi = null;
         try {
@@ -36,7 +36,7 @@ public class AppUtil {
         if (pi == null) {
             return "";
         } else {
-            return pi.packageName;
+            return String.valueOf(pm.getApplicationLabel(pi));
         }
     }
 

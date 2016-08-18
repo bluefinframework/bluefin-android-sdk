@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">BluefinSDK</string>
-    <string name="download_finish">新版已下载完成</string>
+    <string name="bluefin_download_finish">新版已下载完成</string>
+    <string name="bluefin_have_new_version">有新版本</string>
 </resources>

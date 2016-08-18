@@ -15,6 +15,7 @@ import android.util.Log;
 import java.io.File;
 
 import cn.saymagic.bluefinsdk.BluefinHandler;
+import cn.saymagic.bluefinsdk.R;
 import cn.saymagic.bluefinsdk.entity.BluefinApkData;
 import cn.saymagic.bluefinsdk.util.AppUtil;
 import cn.saymagic.bluefinsdk.util.EncryUtil;
@@ -47,7 +48,7 @@ public class SimpleUpdateJob extends Job<Long> {
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
         request.setMimeType("application/vnd.android.package-archive");
-        request.setTitle(AppUtil.getApplicationPackageName(mContext));
+        request.setTitle(AppUtil.getApplicationName(mContext) + mContext.getString(R.string.bluefin_have_new_version));
         String updateInfo = apkData.getUpdateInfo();
         if (!TextUtils.isEmpty(updateInfo)) {
             request.setDescription(updateInfo);
@@ -59,11 +60,13 @@ public class SimpleUpdateJob extends Job<Long> {
     private void showUpdateRemind(@NonNull BluefinApkData apkData, @NonNull String apkName) {
         NotificationManager manger = (NotificationManager) mContext.getSystemService(mContext.NOTIFICATION_SERVICE);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
-        builder.setContentTitle(AppUtil.getApplicationPackageName(mContext));
+        builder.setContentTitle(AppUtil.getApplicationName(mContext) + mContext.getString(R.string.bluefin_have_new_version));
         builder.setSmallIcon(android.R.drawable.stat_sys_download_done);
         String updateInfo = apkData.getUpdateInfo();
         if (!TextUtils.isEmpty(updateInfo)) {
             builder.setContentText(updateInfo);
+        } else {
+            builder.setContentText(mContext.getString(R.string.bluefin_download_finish));
         }
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);

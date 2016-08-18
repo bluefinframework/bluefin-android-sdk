@@ -57,14 +57,16 @@ public final class Bluefin {
         try {
             ApplicationInfo appInfo = context.getPackageManager().getApplicationInfo(context.getPackageName(),
                     PackageManager.GET_META_DATA);
-            if (TextUtils.isEmpty(serverUrl)) {
-                serverUrl = appInfo.metaData.getString("BLUEFIN_SERVER_URL");
-                //double check
+            if (appInfo != null) {
                 if (TextUtils.isEmpty(serverUrl)) {
-                    throw new NullPointerException("bluefi init: server url can't be null");
+                    serverUrl = appInfo.metaData == null ? "" : appInfo.metaData.getString("BLUEFIN_SERVER_URL");
+                    //double check
+                    if (TextUtils.isEmpty(serverUrl)) {
+                        throw new NullPointerException("bluefi init: server url can't be null");
+                    }
                 }
+                identify = appInfo.metaData == null ? "" : appInfo.metaData.getString("bluefinidentify");
             }
-            identify = appInfo.metaData.getString("bluefinidentify");
             if (TextUtils.isEmpty(identify)) {
                 identify = String.valueOf(context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode);
             }
@@ -93,7 +95,8 @@ public final class Bluefin {
 
     /**
      * just search the lastest version apk in the server and return apk info,
-     *  this method do nothing about downloading.
+     * this method do nothing about downloading.
+     *
      * @return
      */
     public static String checkUpdate() {
