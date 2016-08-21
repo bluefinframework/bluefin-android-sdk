@@ -1,48 +1,45 @@
 # Bluefin-Android-SDK
 
-> 与Bluefin Server 交互的Android SDK，提供了方便的接口来访问Bluefin Server。
+> Android SDK for Bluefin Server, provides a convenient interface to access Bluefin Server.
 
+## Install
 
-## 安装
+* compile 'cn.saymagic:bluefinsdk:1.0.9'
 
-* 将bluefinsdk整个library以源码的形式引用
-* compile 'cn.saymagic:bluefinsdk:1.0.6'
+## Useage
 
-## 使用
-Bluefin SDK 对外公开的方法都在`Bluefin`类中以静态的方法提供，具体如下：
+* Bluefin.init(Context context, BluefinCallback callback, String serverUrl)
 
-* Bluefin.init(Context, BluefinCallback, String )
-
-	 初始化Bluefin，需要指定server url 与context， 可选参数BluefinCallback，用来接收各种操作的回调。
+	 Initialization Bluefin, need to specify the server url and context, optional parameters BluefinCallback, used to receive callbacks for operations.
 
 * Bluefin.checkUpdate()
 
-	 检查当前应用最新版本信息。通过init中传入的BluefinCallback进行回调。
-
+	 Check the current application of the latest version. Result will be called back with the init callback.
+	 
 * Bluefin.checkUpdate(BluefinJobWatcher<BluefinApkData> watcher)
 
-	 检查当前应用最新版本信息。通过watcher 回调。
+	 Check the current application of the latest version. Result will be called back with the watcher.
 
 * Bluefin.listAllVersion()
 
-	 列出当前应用的所有版本。通过init中传入的BluefinCallback进行回调。
+	 List all versions. Result will be called back with the init callback.
 
 * Bluefin.listAllVersion(BluefinJobWatcher<List<BluefinApkData>> watcher)
 
-	列出当前应用的所有版本。通过watcher 回调。
+	List all versions. Result will be called backwith the watcher.
 
 * Bluefin.retrace(String s)
 
-	将字符串s进行还原。通过init中传入的BluefinCallback进行回调。
+	retrace s, Result will be called back with the init callback.
 
-* Bluefin.retraceretrace(String s, BluefinJobWatcher<String> watcher)
-	将s进行还原。通过watcher 回调。
+* Bluefin.retrace(String s, BluefinJobWatcher<String> watcher)
+	retrace s, Result will be called back callback with the watcher.
 
 * Bluefin.simpleUpdate()
 
-	检查最新版本，并与当前版本做比较，当需要更新时，对新的apk进行下载。
-
-注：所有请求都在非UI线程处理，所有回调都在UI线程触发。
+	Check the latest version, and compared with the current version, when need to update , the new apk will be download.
+	
+PS: All requests are handling in a background thread and all callbacks will be triggered in the UI thread.
 
 
 ## Licence
