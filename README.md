@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/bluefinframework/bluefin-android-sdk.svg?branch=master)](https://travis-ci.org/bluefinframework/bluefin-android-sdk)
+
 # Bluefin-Android-SDK
 
 > Android SDK for Bluefin Server, provides a convenient interface to access Bluefin Server.
