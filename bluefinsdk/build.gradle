@@ -112,10 +112,15 @@ artifacts {
 build.dependsOn createPom
 
 Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
+try {
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+} catch (Exception e) {
+    System.out.println("please add local.properties file")
+}
+
 bintray {
-    user = properties.getProperty("bintray.user")
-    key = properties.getProperty("bintray.apikey")
+    user = (properties != null && properties.hasProperty("bintray.user")) ?  properties.getProperty("bintray.user") : System.getenv("BINTRAY_USER")
+    key =  (properties != null && properties.hasProperty("bintray.apikey")) ? properties.getProperty("bintray.apikey") : System.getenv("BINTRAY_API_KEY")
     configurations = ['archives']
     pkg {
         repo = "maven"
