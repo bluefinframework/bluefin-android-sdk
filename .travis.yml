@@ -27,4 +27,16 @@ script:
 
 after_success:
 - fir p app/build/outputs/apk/app-debug.apk -T ${FIR_TOKEN} -c "Upload by Travis CI - ${TRAVIS_BUILD_NUMBER}"
+
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure: ${ACCESS_TOKEN}
+  file: app/build/outputs/apk/app-debug.apk
+  on:
+    tags: true
+    all_branches: true
+
+after_deploy:
 - "./gradlew bintrayUpload"

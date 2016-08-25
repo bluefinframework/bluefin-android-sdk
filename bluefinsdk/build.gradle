@@ -4,7 +4,7 @@ apply plugin: 'com.jfrog.bintray'
 
 def siteUrl = 'https://github.com/bluefinframework/bluefin-android-sdk/'
 def gitUrl = 'https://github.com/bluefinframework/bluefin-android-sdk.git'
-version = '1.0.10'
+version = '1.0.11'
 group = 'cn.saymagic'
 
 configurations {
