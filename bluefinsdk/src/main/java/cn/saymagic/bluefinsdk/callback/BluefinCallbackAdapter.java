@@ -80,6 +80,21 @@ public class BluefinCallbackAdapter implements BluefinCallback{
         mWatchers.remove(id);
     }
 
+    @Override
+    public void onListAllApkResult(String id, List<BluefinApkData> datas, Exception e) {
+        List<BluefinJobWatcher> watchers = mWatchers.get(id);
+        if (watchers == null) {
+            if (mCallBack != null) {
+                mCallBack.onListAllApkResult(id, datas, e);
+            }
+            return;
+        }
+        for (BluefinJobWatcher watcher : watchers) {
+            watcher.onResult(datas, e);
+        }
+        mWatchers.remove(id);
+    }
+
     public void addWatcher(String id, BluefinJobWatcher watcher) {
         if (mWatchers.containsKey(id)) {
             List<BluefinJobWatcher> watchers = mWatchers.get(id);

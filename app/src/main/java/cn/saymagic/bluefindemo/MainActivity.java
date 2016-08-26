@@ -21,12 +21,12 @@ public class MainActivity extends AppCompatActivity implements BluefinCallback {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bluefin.init(this, this, "http://10.240.141.70:2556/");
+        Bluefin.init(this, this, "http://10.242.8.21:2556/");
         setContentView(R.layout.activity_main);
     }
 
     public void listAllVersion(View view) {
-        Bluefin.listAllVersion(new BluefinJobWatcher<List<BluefinApkData>>() {
+        Bluefin.listAllVersion("com.caoyanming.curriculum", new BluefinJobWatcher<List<BluefinApkData>>() {
             @Override
             public void onResult(List<BluefinApkData> bluefinApkDatas, Exception e) {
                 Toast.makeText(MainActivity.this, String.valueOf(bluefinApkDatas), Toast.LENGTH_LONG).show();
@@ -40,6 +40,15 @@ public class MainActivity extends AppCompatActivity implements BluefinCallback {
             public void onResult(BluefinApkData data, Exception e) {
                 Log.i(TAG, "onResult: " + String.valueOf(data) + " e: " + String.valueOf(e));
                 Toast.makeText(MainActivity.this, String.valueOf(data), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void listAllApks(View view) {
+        Bluefin.listAllApks(new BluefinJobWatcher<List<BluefinApkData>>() {
+            @Override
+            public void onResult(List<BluefinApkData> bluefinApkDatas, Exception e) {
+                Toast.makeText(MainActivity.this, String.valueOf(bluefinApkDatas), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -66,6 +75,11 @@ public class MainActivity extends AppCompatActivity implements BluefinCallback {
     @Override
     public void onSimpleUpdateJobResult(String id, long result, Exception e) {
         Log.i(TAG, "onSimpleUpdateJobResult-id: " + id + " result: " + String.valueOf(result) + " e: " + String.valueOf(e));
+    }
+
+    @Override
+    public void onListAllApkResult(String id, List<BluefinApkData> datas, Exception e) {
+        Log.i(TAG, "onListAllApkResult-id: " + id + " result: " + String.valueOf(datas) + " e: " + String.valueOf(e));
     }
 
 }

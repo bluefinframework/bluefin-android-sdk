@@ -43,4 +43,14 @@ public interface BluefinCallback {
      * @param e  exception if exists, if SIMPLE_UPDATE_JOB_FAILED, the e will not be null.
      */
     void onSimpleUpdateJobResult(String id, long result, Exception e);
+
+    /**
+     * the callback for list all apk datas,
+     * @param id the id of the request job
+     * @param datas the result of callback if LIST_ALL_APKS_DONE or LIST_ALL_APKS_CANCLE. otherwise null.
+     * @param e  exception if exists, if LIST_ALL_APKS_FAILED, the e will not be null.
+     */
+    void onListAllApkResult(String id, List<BluefinApkData> datas, Exception e);
+
+
 }

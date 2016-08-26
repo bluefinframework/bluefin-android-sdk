@@ -1,7 +1,5 @@
 package cn.saymagic.bluefinsdk.job;
 
-import android.text.TextUtils;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -13,37 +11,26 @@ import java.util.List;
 
 import cn.saymagic.bluefinsdk.BluefinHandler;
 import cn.saymagic.bluefinsdk.entity.BluefinApkData;
-import cn.saymagic.bluefinsdk.exception.NotFoundException;
 import cn.saymagic.bluefinsdk.util.IOUtil;
 import cn.saymagic.bluefinsdk.util.URLUtil;
 
 /**
- * Created by saymagic on 16/6/25.
+ * Created by saymagic on 16/8/26.
  */
-public class ListAllVersionJob extends Job<List<BluefinApkData>>{
+public class ListApksJob extends Job<List<BluefinApkData>> {
 
-    private String mAimPackageName;
-
-    public static final String LIST_ALL_VERSION = "/api/v1/%s/list/";
-
-    public ListAllVersionJob() {
-    }
-
-    public ListAllVersionJob(String aimPackageName) {
-        this.mAimPackageName = aimPackageName;
-    }
+    public static final String LIST_ALL_APKS = "/api/v1/apks/";
 
     @Override
-    public List<BluefinApkData> perform() throws Exception {
+    protected List<BluefinApkData> perform() throws Exception {
         InputStream inputStream = null;
         URL url = null;
-        String packageName = TextUtils.isEmpty(mAimPackageName) ? mPackageName : mAimPackageName;
         try {
-            url = new URL(URLUtil.join(mServerUrl, String.format(LIST_ALL_VERSION, mAimPackageName)));
-            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+            url = new URL(URLUtil.join(mServerUrl, LIST_ALL_APKS));
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.connect();
             switch (connection.getResponseCode()) {
-                case HttpURLConnection.HTTP_OK:{
+                case HttpURLConnection.HTTP_OK: {
                     inputStream = url.openStream();
                     JSONArray array = new JSONArray(IOUtil.readInputStreamAsString(inputStream));
                     int length = array.length();
@@ -56,34 +43,33 @@ public class ListAllVersionJob extends Job<List<BluefinApkData>>{
                         }
                     }
                     return datas;
-                }case HttpURLConnection.HTTP_NOT_FOUND:{
-                    throw new NotFoundException();
-                }default:{
+                }
+                default: {
                     throw new Exception("bad request , the response code is " + connection.getResponseCode());
                 }
             }
-        }finally {
+        } finally {
             IOUtil.close(inputStream);
         }
     }
 
     @Override
     public String getName() {
-        return "ListAllVersionJob";
+        return "ListApksJob";
     }
 
     @Override
-    public void onDone(List<BluefinApkData> data) {
-        sendMessageData(BluefinHandler.LIST_ALL_VERSION_DONE, data);
+    public void onDone(List<BluefinApkData> bluefinApkDatas) {
+        sendMessageData(BluefinHandler.LIST_ALL_APKS_DONE, bluefinApkDatas);
     }
 
     @Override
     public void onFail(Exception e) {
-        sendMessageData(BluefinHandler.LIST_ALL_VERSION_FAILED, e);
+        sendMessageData(BluefinHandler.LIST_ALL_APKS_FAILED, e);
     }
 
     @Override
-    public void onCancel(List<BluefinApkData> data) {
-        sendMessageData(BluefinHandler.LIST_ALL_VERSION_CANCLE, data);
+    public void onCancel(List<BluefinApkData> bluefinApkDatas) {
+        sendMessageData(BluefinHandler.LIST_ALL_APKS_CANCLE, bluefinApkDatas);
     }
 }

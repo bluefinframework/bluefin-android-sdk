@@ -11,7 +11,11 @@ public final class BluefinApkData {
 
     private String mQrlink;
 
+    private String mName;
+
     private long mUpdateTime;
+
+    private String mIconUrl;
 
     private String mVersionCode;
 
@@ -36,6 +40,14 @@ public final class BluefinApkData {
     private boolean mIsEmpty = true;
 
     private BluefinApkData() {}
+
+    public String getName() {
+        return mName;
+    }
+
+    public void setName(String name) {
+        this.mName = name;
+    }
 
     public double getSize() {
         return mFileSize;
@@ -149,6 +161,14 @@ public final class BluefinApkData {
         this.mIsEmpty = mIsEmpty;
     }
 
+    public String getIconUrl() {
+        return mIconUrl;
+    }
+
+    public void setIconUrl(String iconUrl) {
+        this.mIconUrl = iconUrl;
+    }
+
     public BluefinApkData fromJSON(JSONObject object) {
         if (object == null) {
             setIsEmpty(true);
@@ -168,6 +188,8 @@ public final class BluefinApkData {
         setPackageName(object.optString("package"));
         setExtData(object.optString("extData"));
         setIdentify(object.optString("identity"));
+        setIconUrl(object.optString("iconUrl"));
+        setName(object.optString("name"));
         setIsEmpty(false);
         return this;
     }
@@ -192,6 +214,8 @@ public final class BluefinApkData {
                 ", mUpdateInfo='" + mUpdateInfo + '\'' +
                 ", mExtData='" + mExtData + '\'' +
                 ", mIdentify='" + mIdentify + '\'' +
+                ", mIconUrl='" + mIconUrl + '\'' +
+                ", mName='" + mName + '\'' +
                 ", mIsEmpty=" + mIsEmpty +
                 '}';
     }

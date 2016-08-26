@@ -18,6 +18,7 @@ import cn.saymagic.bluefinsdk.entity.BluefinApkData;
 import cn.saymagic.bluefinsdk.job.CheckUpdateJob;
 import cn.saymagic.bluefinsdk.job.JobService;
 import cn.saymagic.bluefinsdk.job.ListAllVersionJob;
+import cn.saymagic.bluefinsdk.job.ListApksJob;
 import cn.saymagic.bluefinsdk.job.RetraceJob;
 import cn.saymagic.bluefinsdk.job.SimpleUpdateJob;
 
@@ -124,6 +125,16 @@ public final class Bluefin {
         sJobService.enqueueWithWatcher(new ListAllVersionJob(), watcher, mCallback);
     }
 
+    public static String listAllVersion(String packageName) {
+        checkInit();
+        return sJobService.enqueue(new ListAllVersionJob(packageName));
+    }
+
+    public static void listAllVersion(String packageName, BluefinJobWatcher<List<BluefinApkData>> watcher) {
+        checkInit();
+        sJobService.enqueueWithWatcher(new ListAllVersionJob(packageName), watcher, mCallback);
+    }
+
     public static String retrace(String s) {
         checkInit();
         return sJobService.enqueue(new RetraceJob(s));
@@ -143,6 +154,17 @@ public final class Bluefin {
     public static void retrace(File f, BluefinJobWatcher<String> watcher) {
         checkInit();
         sJobService.enqueueWithWatcher(new RetraceJob(f), watcher, mCallback);
+    }
+
+    public static void listAllApks() {
+        checkInit();
+        sJobService.enqueue(new ListApksJob());
+    }
+
+
+    public static void listAllApks(BluefinJobWatcher<List<BluefinApkData>> watcher) {
+        checkInit();
+        sJobService.enqueueWithWatcher(new ListApksJob(), watcher, mCallback);
     }
 
     private static void checkInit() {

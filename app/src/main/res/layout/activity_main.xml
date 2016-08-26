@@ -38,4 +38,14 @@
         android:text="simple update"
         android:onClick="simpleUpdate"/>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="50dp"></View>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="list All apks"
+        android:onClick="listAllApks"/>
+
 </LinearLayout>
