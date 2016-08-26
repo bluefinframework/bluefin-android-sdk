@@ -20,7 +20,7 @@ import cn.saymagic.bluefinsdk.util.URLUtil;
  */
 public class ListAllVersionJob extends Job<List<BluefinApkData>>{
 
-    public static final String LIST_ALL_VERSION = "/api/v1/list/%s/";
+    public static final String LIST_ALL_VERSION = "/api/v1/%s/list/";
 
     @Override
     public List<BluefinApkData> perform() throws Exception {

@@ -17,7 +17,7 @@ import cn.saymagic.bluefinsdk.util.URLUtil;
  */
 public class CheckUpdateJob extends Job<BluefinApkData>{
 
-    private static String UPDATE_PATH = "/api/v1/info/%s/";
+    private static String UPDATE_PATH = "/api/v1/%s/info/";
 
     @Override
     public BluefinApkData perform() throws Exception {

@@ -18,7 +18,7 @@ import cn.saymagic.bluefinsdk.util.URLUtil;
  */
 public class RetraceJob extends Job<String> {
 
-    private static String MAPPING_PATH = "/api/v1/mapping/%s/%s/";
+    private static String MAPPING_PATH = "/api/v1/%s/%s/mapping/";
 
     private File mEncryptFile;
 
