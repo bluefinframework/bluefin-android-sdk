@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 
 import java.util.UUID;
+import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import cn.saymagic.bluefinsdk.callback.BluefinCallbackAdapter;
@@ -26,6 +27,8 @@ public class JobService extends Thread {
 
     private LinkedBlockingQueue<Job> mQueue;
 
+    private Executor mExecutor;
+
     private volatile boolean mStop;
 
     private volatile Job mCurrentJob;
@@ -39,6 +42,16 @@ public class JobService extends Thread {
         this.mQueue = new LinkedBlockingQueue<Job>();
     }
 
+    public JobService(String serverUrl, Handler handler, String packageName, String identity, Context context, Executor executor) {
+        this.mServerUrl = serverUrl;
+        this.mHandler = handler;
+        this.mPackageName = packageName;
+        this.mIdentity = identity;
+        this.mContext = context;
+        this.mExecutor = executor;
+        this.mQueue = new LinkedBlockingQueue<Job>();
+    }
+
     @Override
     public void run() {
         while (!isStop()) {
@@ -46,20 +59,7 @@ public class JobService extends Thread {
             if (job == null) {
                 continue;
             }
-            mCurrentJob = job;
-            Object o = null;
-            try {
-                o = job.perform();
-            } catch (Exception e) {
-                job.onFail(e);
-            }
-            if (o != null) {
-                if (!isStop()) {
-                    job.onDone(o);
-                } else {
-                    job.onCancel(o);
-                }
-            }
+            mExecutor.execute(new JobRunable(job));
         }
     }
 
@@ -78,19 +78,51 @@ public class JobService extends Thread {
     public String enqueue(Job job) {
         String id = generateJobId();
         job.mount(mServerUrl, mHandler, mPackageName, mIdentity, id, mContext);
-        mQueue.add(job);
-        return id;
+        try {
+            mQueue.add(job);
+            return id;
+        } catch (IllegalStateException e) {
+            return "-1";
+        }
     }
 
     public void enqueueWithWatcher(Job job, BluefinJobWatcher watcher, BluefinCallbackAdapter adapter) {
         String id = generateJobId();
         job.mount(mServerUrl, mHandler, mPackageName, mIdentity, id, mContext);
         adapter.addWatcher(id, watcher);
-        mQueue.offer(job);
+        try {
+            mQueue.add(job);
+        } catch (IllegalStateException ignore) {
+        }
     }
 
     private String generateJobId() {
         return String.valueOf(UUID.randomUUID());
     }
 
+    private class JobRunable implements Runnable {
+
+        private Job job;
+
+        public JobRunable(Job job) {
+            this.job = job;
+        }
+
+        @Override
+        public void run() {
+            Object o = null;
+            try {
+                o = job.perform();
+            } catch (Exception e) {
+                job.onFail(e);
+            }
+            if (o != null) {
+                if (!isStop()) {
+                    job.onDone(o);
+                } else {
+                    job.onCancel(o);
+                }
+            }
+        }
+    }
 }

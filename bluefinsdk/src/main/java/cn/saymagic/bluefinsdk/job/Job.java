@@ -36,7 +36,10 @@ public abstract class Job<T> {
 
     public abstract void onCancel(T t);
 
-    public Job(){};
+    public Job() {
+    }
+
+    ;
 
     public Job(String serverUrl, Handler handler, String packageName, String identity, String jobId, Context context) {
         this.mount(serverUrl, handler, packageName, identity, jobId, context);
@@ -45,6 +48,7 @@ public abstract class Job<T> {
     /**
      * mount some useful info for this job.
      * JobService will do this.
+     *
      * @param serverUrl
      * @param handler
      * @param packageName

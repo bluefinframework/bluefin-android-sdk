@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import cn.saymagic.bluefinsdk.Bluefin;
 import cn.saymagic.bluefinsdk.callback.BluefinCallback;
@@ -21,7 +22,7 @@ public class MainActivity extends AppCompatActivity implements BluefinCallback {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bluefin.init(this, this, "http://10.242.8.21:2556/");
+        Bluefin.init(this, this, "http://10.242.8.21:2556/", Executors.newSingleThreadExecutor());
         setContentView(R.layout.activity_main);
     }
 

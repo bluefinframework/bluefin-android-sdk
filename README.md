@@ -6,7 +6,7 @@
 
 ## Install
 
-* compile 'cn.saymagic:bluefinsdk:1.0.9'
+* compile 'cn.saymagic:bluefinsdk:1.0.12'
 
 ## Useage
 

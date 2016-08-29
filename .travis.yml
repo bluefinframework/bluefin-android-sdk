@@ -40,3 +40,7 @@ deploy:
 
 after_deploy:
 - "./gradlew bintrayUpload"
+
+notifications:
+  email:
+    - magicnotification@163.com

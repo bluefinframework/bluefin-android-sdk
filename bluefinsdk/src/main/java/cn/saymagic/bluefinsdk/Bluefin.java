@@ -1,5 +1,6 @@
 package cn.saymagic.bluefinsdk;
 
+import android.app.job.JobScheduler;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -10,6 +11,8 @@ import android.util.Log;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import cn.saymagic.bluefinsdk.callback.BluefinCallback;
 import cn.saymagic.bluefinsdk.callback.BluefinCallbackAdapter;
@@ -42,10 +45,10 @@ public final class Bluefin {
     }
 
     public static void init(Context context, BluefinCallback callback) {
-        init(context, callback, "");
+        init(context, callback, "", Executors.newSingleThreadExecutor());
     }
 
-    public static void init(Context context, BluefinCallback callback, String serverUrl) {
+    public static void init(Context context, BluefinCallback callback, String serverUrl, Executor executor) {
         if (inited) {
 //            throw new RuntimeException("you are already init the Bluefin.");
             Log.e("Bluefin", "you are already init the Bluefin.");
@@ -89,7 +92,7 @@ public final class Bluefin {
         sUIHandler = new BluefinHandler(Looper.getMainLooper(), mCallback);
         sConfig.setHandler(sUIHandler);
 
-        sJobService = new JobService(sConfig.getServerUrl(), sConfig.getHandler(), sConfig.getPackageName(), identify, sConfig.getContext());
+        sJobService = new JobService(sConfig.getServerUrl(), sConfig.getHandler(), sConfig.getPackageName(), identify, sConfig.getContext(), executor);
         sJobService.start();
         inited = true;
     }
