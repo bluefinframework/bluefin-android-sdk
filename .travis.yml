@@ -21,7 +21,7 @@ sudo: required
 before_install:
 - chmod +x gradlew
 - gem install fir-cli
-git config --global user.email ${EMAIL}
+- git config --global user.email ${EMAIL}
 
 script:
 - "./gradlew assembleDebug"
