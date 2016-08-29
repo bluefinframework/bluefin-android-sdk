@@ -44,5 +44,7 @@ after_deploy:
 
 notifications:
   email:
+    recipients:
+        - ${EMAIL}
     on_success: always
     on_failure: always
