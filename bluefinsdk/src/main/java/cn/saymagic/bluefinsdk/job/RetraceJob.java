@@ -9,7 +9,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import cn.saymagic.bluefinsdk.BluefinHandler;
-import cn.saymagic.bluefinsdk.exception.NotFoundException;
+import cn.saymagic.bluefinsdk.exception.BluefinException;
+import cn.saymagic.bluefinsdk.exception.BluefinNotFoundException;
+import cn.saymagic.bluefinsdk.exception.BluefinUnknowException;
 import cn.saymagic.bluefinsdk.util.IOUtil;
 import cn.saymagic.bluefinsdk.util.URLUtil;
 
@@ -24,16 +26,24 @@ public class RetraceJob extends Job<String> {
 
     private String mEncryptString;
 
-    public RetraceJob(String mEncryptString) {
+    private String mPackageName;
+
+    private String mIdentity;
+
+    public RetraceJob(String mEncryptString, String packageName, String identity) {
         this.mEncryptString = mEncryptString;
+        this.mPackageName = packageName;
+        this.mIdentity = identity;
     }
 
-    public RetraceJob(File mEncryptFile) {
+    public RetraceJob(File mEncryptFile, String packageName, String identity) {
         this.mEncryptFile = mEncryptFile;
+        this.mPackageName = packageName;
+        this.mIdentity = identity;
     }
 
     @Override
-    public String perform() throws Exception {
+    public String perform() throws BluefinException {
         InputStream inputStream = null;
         OutputStream outputStream = null;
         URL url = null;
@@ -52,11 +62,13 @@ public class RetraceJob extends Job<String> {
                     inputStream = url.openStream();
                     return IOUtil.readInputStreamAsString(inputStream);
                 }case HttpURLConnection.HTTP_NOT_FOUND:{
-                    throw new NotFoundException();
+                    throw new BluefinNotFoundException();
                 }default:{
                     throw new Exception("bad request , the response code is " + connection.getResponseCode());
                 }
             }
+        }catch (Exception e){
+            throw new BluefinUnknowException(e);
         }finally {
             connection.disconnect();
             IOUtil.close(inputStream);
@@ -66,7 +78,7 @@ public class RetraceJob extends Job<String> {
 
     @Override
     public String getName() {
-        return "MappingJob";
+        return "RetraceJob";
     }
 
     @Override

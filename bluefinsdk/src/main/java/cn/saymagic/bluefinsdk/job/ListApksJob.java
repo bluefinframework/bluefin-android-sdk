@@ -11,6 +11,8 @@ import java.util.List;
 
 import cn.saymagic.bluefinsdk.BluefinHandler;
 import cn.saymagic.bluefinsdk.entity.BluefinApkData;
+import cn.saymagic.bluefinsdk.exception.BluefinException;
+import cn.saymagic.bluefinsdk.exception.BluefinUnknowException;
 import cn.saymagic.bluefinsdk.util.IOUtil;
 import cn.saymagic.bluefinsdk.util.URLUtil;
 
@@ -22,7 +24,7 @@ public class ListApksJob extends Job<List<BluefinApkData>> {
     public static final String LIST_ALL_APKS = "/api/v1/apks/";
 
     @Override
-    protected List<BluefinApkData> perform() throws Exception {
+    public List<BluefinApkData> perform() throws BluefinException {
         InputStream inputStream = null;
         URL url = null;
         try {
@@ -45,10 +47,12 @@ public class ListApksJob extends Job<List<BluefinApkData>> {
                     return datas;
                 }
                 default: {
-                    throw new Exception("bad request , the response code is " + connection.getResponseCode());
+                    throw new BluefinUnknowException("bad request , the response code is " + connection.getResponseCode());
                 }
             }
-        } finally {
+        }catch (Exception e){
+            throw new BluefinUnknowException(e);
+        }finally {
             IOUtil.close(inputStream);
         }
     }

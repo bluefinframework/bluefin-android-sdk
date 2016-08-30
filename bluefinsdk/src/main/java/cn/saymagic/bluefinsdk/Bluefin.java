@@ -1,6 +1,5 @@
 package cn.saymagic.bluefinsdk;
 
-import android.app.job.JobScheduler;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -14,14 +13,16 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import cn.saymagic.bluefinsdk.callback.BluefinCallback;
 import cn.saymagic.bluefinsdk.callback.BluefinCallbackAdapter;
 import cn.saymagic.bluefinsdk.callback.BluefinJobWatcher;
 import cn.saymagic.bluefinsdk.entity.BluefinApkData;
-import cn.saymagic.bluefinsdk.job.CheckUpdateJob;
+import cn.saymagic.bluefinsdk.entity.PingResult;
+import cn.saymagic.bluefinsdk.exception.BluefinException;
+import cn.saymagic.bluefinsdk.job.GetNewestVersionJob;
 import cn.saymagic.bluefinsdk.job.JobService;
 import cn.saymagic.bluefinsdk.job.ListAllVersionJob;
 import cn.saymagic.bluefinsdk.job.ListApksJob;
+import cn.saymagic.bluefinsdk.job.PingJob;
 import cn.saymagic.bluefinsdk.job.RetraceJob;
 import cn.saymagic.bluefinsdk.job.SimpleUpdateJob;
 
@@ -44,11 +45,11 @@ public final class Bluefin {
         init(context, null);
     }
 
-    public static void init(Context context, BluefinCallback callback) {
-        init(context, callback, "", Executors.newSingleThreadExecutor());
+    public static void init(Context context, String serverUrl) {
+        init(context, serverUrl, Executors.newSingleThreadExecutor());
     }
 
-    public static void init(Context context, BluefinCallback callback, String serverUrl, Executor executor) {
+    public static void init(Context context, String serverUrl, Executor executor) {
         if (inited) {
 //            throw new RuntimeException("you are already init the Bluefin.");
             Log.e("Bluefin", "you are already init the Bluefin.");
@@ -66,13 +67,9 @@ public final class Bluefin {
                     serverUrl = appInfo.metaData == null ? "" : appInfo.metaData.getString("BLUEFIN_SERVER_URL");
                     //double check
                     if (TextUtils.isEmpty(serverUrl)) {
-                        throw new NullPointerException("bluefi init: server url can't be null");
+                        throw new NullPointerException("bluefin init: server url can't be null");
                     }
                 }
-                identify = appInfo.metaData == null ? "" : appInfo.metaData.getString("bluefinidentify");
-            }
-            if (TextUtils.isEmpty(identify)) {
-                identify = String.valueOf(context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode);
             }
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
@@ -83,88 +80,160 @@ public final class Bluefin {
         sConfig.setServerUrl(serverUrl);
 
         mCallback = new BluefinCallbackAdapter();
-        if (callback != null) {
-            mCallback.setCustomCallBack(callback);
-        }
-
-        sConfig.setPackageName(context.getPackageName());
 
         sUIHandler = new BluefinHandler(Looper.getMainLooper(), mCallback);
         sConfig.setHandler(sUIHandler);
 
-        sJobService = new JobService(sConfig.getServerUrl(), sConfig.getHandler(), sConfig.getPackageName(), identify, sConfig.getContext(), executor);
+        sJobService = new JobService(sConfig.getServerUrl(), sConfig.getHandler(), sConfig.getContext(), executor);
         sJobService.start();
         inited = true;
     }
 
     /**
-     * just search the lastest version apk in the server and return apk info,
+     * sync ping the server
+     *
+     * @return
+     * @throws BluefinException
+     */
+    public static PingResult ping() throws BluefinException {
+        checkInit();
+        return sJobService.directlyRun(new PingJob());
+    }
+
+    /**
+     * async ping the server
+     *
+     * @param watcher
+     */
+    public static void ping(BluefinJobWatcher<PingResult> watcher) {
+        checkInit();
+        sJobService.enqueueWithWatcher(new PingJob(), watcher, mCallback);
+    }
+
+    /**
+     * async search the newest version apk in the server and return apk info,
      * this method do nothing about downloading.
      *
      * @return
      */
-    public static String checkUpdate() {
+    public static BluefinApkData checkNewestVersion(String packageName) throws BluefinException {
         checkInit();
-        return sJobService.enqueue(new CheckUpdateJob());
+        return sJobService.directlyRun(new GetNewestVersionJob(packageName));
     }
 
-    public static void checkUpdate(BluefinJobWatcher<BluefinApkData> watcher) {
+    /**
+     * async search the newest version apk in the server and return apk info,
+     * this method do nothing about downloading.
+     *
+     * @return
+     */
+    public static void checkNewestVersion(String packageName, BluefinJobWatcher<BluefinApkData> watcher) {
         checkInit();
-        sJobService.enqueueWithWatcher(new CheckUpdateJob(), watcher, mCallback);
+        sJobService.enqueueWithWatcher(new GetNewestVersionJob(packageName), watcher, mCallback);
     }
 
-    public static String simpleUpdate() {
+    /**
+     * check the newest version for package, if server has newer version , download it and show notification
+     *
+     * @param packageName
+     * @return
+     */
+    public static String simpleUpdate(String packageName) {
         checkInit();
-        return sJobService.enqueue(new SimpleUpdateJob());
+        return sJobService.enqueue(new SimpleUpdateJob(packageName));
     }
 
-    public static String listAllVersion() {
+    /**
+     * sync to list all version info for package
+     *
+     * @param packageName
+     * @return
+     */
+    public static List<BluefinApkData> listAllVersion(String packageName) throws BluefinException {
         checkInit();
-        return sJobService.enqueue(new ListAllVersionJob());
+        return sJobService.directlyRun(new ListAllVersionJob(packageName));
     }
 
-    public static void listAllVersion(BluefinJobWatcher<List<BluefinApkData>> watcher) {
-        checkInit();
-        sJobService.enqueueWithWatcher(new ListAllVersionJob(), watcher, mCallback);
-    }
-
-    public static String listAllVersion(String packageName) {
-        checkInit();
-        return sJobService.enqueue(new ListAllVersionJob(packageName));
-    }
-
+    /**
+     * async to list all version info for package
+     *
+     * @param packageName
+     * @param watcher
+     */
     public static void listAllVersion(String packageName, BluefinJobWatcher<List<BluefinApkData>> watcher) {
         checkInit();
         sJobService.enqueueWithWatcher(new ListAllVersionJob(packageName), watcher, mCallback);
     }
 
-    public static String retrace(String s) {
+    /**
+     * sync to retrace string s
+     *
+     * @param s           string to be retraced
+     * @param packageName
+     * @param identity
+     * @return
+     * @throws Exception
+     */
+    public static String retrace(String s, String packageName, String identity) throws BluefinException {
         checkInit();
-        return sJobService.enqueue(new RetraceJob(s));
+        return sJobService.directlyRun(new RetraceJob(s, packageName, identity));
     }
 
-    public static void retrace(String s, BluefinJobWatcher<String> watcher) {
+    /**
+     * async to retrace string s
+     *
+     * @param s           string to be retraced
+     * @param packageName
+     * @param identity
+     * @param watcher
+     */
+    public static void retrace(String s, String packageName, String identity, BluefinJobWatcher<String> watcher) {
         checkInit();
-        sJobService.enqueueWithWatcher(new RetraceJob(s), watcher, mCallback);
+        sJobService.enqueueWithWatcher(new RetraceJob(s, packageName, identity), watcher, mCallback);
     }
 
-    public static String retrace(File f) {
+    /**
+     * sync to retrace file f
+     *
+     * @param f           file to be retraced
+     * @param packageName
+     * @param identity
+     * @return
+     * @throws Exception
+     */
+    public static String retrace(File f, String packageName, String identity) throws BluefinException {
         checkInit();
-        return sJobService.enqueue(new RetraceJob(f));
+        return sJobService.directlyRun(new RetraceJob(f, packageName, identity));
     }
 
-
-    public static void retrace(File f, BluefinJobWatcher<String> watcher) {
+    /**
+     * async to retrace string f
+     *
+     * @param f           f to be retraced
+     * @param packageName
+     * @param identity
+     * @param watcher
+     */
+    public static void retrace(File f, String packageName, String identity, BluefinJobWatcher<String> watcher) {
         checkInit();
-        sJobService.enqueueWithWatcher(new RetraceJob(f), watcher, mCallback);
+        sJobService.enqueueWithWatcher(new RetraceJob(f, packageName, identity), watcher, mCallback);
     }
 
-    public static void listAllApks() {
+    /**
+     * sync to list all various apk in the server
+     * this method will return the newest version for apk
+     */
+    public static List<BluefinApkData> listAllApks() throws BluefinException {
         checkInit();
-        sJobService.enqueue(new ListApksJob());
+        return sJobService.directlyRun(new ListApksJob());
     }
 
-
+    /**
+     * async to list all various apk in the server
+     * this method will return the newest version for apk
+     *
+     * @param watcher
+     */
     public static void listAllApks(BluefinJobWatcher<List<BluefinApkData>> watcher) {
         checkInit();
         sJobService.enqueueWithWatcher(new ListApksJob(), watcher, mCallback);

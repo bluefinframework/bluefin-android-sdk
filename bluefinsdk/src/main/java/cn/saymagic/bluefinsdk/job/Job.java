@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
-import cn.saymagic.bluefinsdk.R;
+import cn.saymagic.bluefinsdk.exception.BluefinException;
 
 /**
  * Created by saymagic on 16/6/21.
@@ -16,17 +16,11 @@ public abstract class Job<T> {
 
     protected Handler mHandler;
 
-    protected String mPackageName;
-
     protected Context mContext;
-
-    protected String mIdentity;
 
     protected String mJobId;
 
-    protected Job<R> mBaseJob;
-
-    protected abstract T perform() throws Exception;
+    protected abstract T perform() throws BluefinException;
 
     public abstract String getName();
 
@@ -41,24 +35,18 @@ public abstract class Job<T> {
 
     ;
 
-    public Job(String serverUrl, Handler handler, String packageName, String identity, String jobId, Context context) {
-        this.mount(serverUrl, handler, packageName, identity, jobId, context);
+    public Job(String serverUrl, Handler handler, String jobId, Context context) {
+        this.mount(serverUrl, handler, jobId, context);
     }
 
     /**
      * mount some useful info for this job.
      * JobService will do this.
      *
-     * @param serverUrl
-     * @param handler
-     * @param packageName
-     * @param identity
      */
-    public void mount(String serverUrl, Handler handler, String packageName, String identity, String jobId, Context context) {
+    public void mount(String serverUrl, Handler handler,String jobId, Context context) {
         this.mServerUrl = serverUrl;
         this.mHandler = handler;
-        this.mPackageName = packageName;
-        this.mIdentity = identity;
         this.mJobId = jobId;
         this.mContext = context;
     }

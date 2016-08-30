@@ -17,6 +17,7 @@ import java.io.File;
 import cn.saymagic.bluefinsdk.BluefinHandler;
 import cn.saymagic.bluefinsdk.R;
 import cn.saymagic.bluefinsdk.entity.BluefinApkData;
+import cn.saymagic.bluefinsdk.exception.BluefinException;
 import cn.saymagic.bluefinsdk.util.AppUtil;
 import cn.saymagic.bluefinsdk.util.EncryUtil;
 
@@ -28,15 +29,21 @@ public class SimpleUpdateJob extends Job<Long> {
     public static final String DOWNLOAD_DIR_NAME = "Bluefin";
     public static final int NOTIFICATION_ID = 1;
 
+    private String mPakcageName;
+
+    public SimpleUpdateJob(String mPakcageName) {
+        this.mPakcageName = mPakcageName;
+    }
+
     @Override
-    public Long perform() throws Exception {
-        CheckUpdateJob baseJob = new CheckUpdateJob();
-        baseJob.mount(mServerUrl, mHandler, mPackageName, mIdentity, mJobId, mContext);
+    public Long perform() throws BluefinException {
+        GetNewestVersionJob baseJob = new GetNewestVersionJob(mPakcageName);
+        baseJob.mount(mServerUrl, mHandler,  mJobId, mContext);
         BluefinApkData apkData = baseJob.perform();
-        if (apkData == null || apkData.isEmpty() || apkData.getVersionCode() <= AppUtil.getApplicationVersionCode(mContext)) {
+        if (apkData == null || apkData.isEmpty() || apkData.getVersionCode() <= AppUtil.getApplicationVersionCode(mPakcageName, mContext)) {
             return -1l;
         }
-        String apkName = mContext.getPackageName().replace(".", "-") + "-" + apkData.getIdentify() + ".apk";
+        String apkName = mPakcageName.replace(".", "-") + "-" + apkData.getIdentify() + ".apk";
         if (isApkFileExist(apkData, apkName)) {
             showUpdateRemind(apkData, apkName);
             return -1l;
@@ -48,7 +55,7 @@ public class SimpleUpdateJob extends Job<Long> {
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
         request.setMimeType("application/vnd.android.package-archive");
-        request.setTitle(AppUtil.getApplicationName(mContext) + mContext.getString(R.string.bluefin_have_new_version));
+        request.setTitle(AppUtil.getApplicationName(mPakcageName, mContext) + mContext.getString(R.string.bluefin_have_new_version));
         String updateInfo = apkData.getUpdateInfo();
         if (!TextUtils.isEmpty(updateInfo)) {
             request.setDescription(updateInfo);
@@ -60,7 +67,7 @@ public class SimpleUpdateJob extends Job<Long> {
     private void showUpdateRemind(@NonNull BluefinApkData apkData, @NonNull String apkName) {
         NotificationManager manger = (NotificationManager) mContext.getSystemService(mContext.NOTIFICATION_SERVICE);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
-        builder.setContentTitle(AppUtil.getApplicationName(mContext) + mContext.getString(R.string.bluefin_have_new_version));
+        builder.setContentTitle(AppUtil.getApplicationName(mPakcageName, mContext) + mContext.getString(R.string.bluefin_have_new_version));
         builder.setSmallIcon(android.R.drawable.stat_sys_download_done);
         String updateInfo = apkData.getUpdateInfo();
         if (!TextUtils.isEmpty(updateInfo)) {

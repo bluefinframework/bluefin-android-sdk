@@ -10,11 +10,11 @@ import android.content.pm.PackageManager;
  */
 public class AppUtil {
 
-    public static int getApplicationVersionCode(Context context) {
+    public static int getApplicationVersionCode(String packageName, Context context) {
         PackageManager pm = context.getPackageManager();
         PackageInfo pi = null;
         try {
-            pi = pm.getPackageInfo(context.getPackageName(), 0);
+            pi = pm.getPackageInfo(packageName, 0);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -25,11 +25,11 @@ public class AppUtil {
         }
     }
 
-    public static String getApplicationName(Context context) {
+    public static String getApplicationName(String packageName, Context context) {
         PackageManager pm = context.getPackageManager();
         ApplicationInfo pi = null;
         try {
-            pi = pm.getApplicationInfo(context.getPackageName(), 0);
+            pi = pm.getApplicationInfo(packageName, 0);
         } catch (PackageManager.NameNotFoundException e) {
             return "";
         }

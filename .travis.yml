@@ -40,7 +40,8 @@ deploy:
     all_branches: true
 
 after_deploy:
-- "./gradlew bintrayUpload"
+- "./gradlew :bluefinsdk:bintrayUpload"
+- "./gradlew :bluefinrxsdk:bintrayUpload"
 
 notifications:
   email:

@@ -9,6 +9,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import cn.saymagic.bluefinsdk.callback.BluefinCallbackAdapter;
 import cn.saymagic.bluefinsdk.callback.BluefinJobWatcher;
+import cn.saymagic.bluefinsdk.exception.BluefinException;
 
 /**
  * Created by saymagic on 16/6/21.
@@ -33,20 +34,16 @@ public class JobService extends Thread {
 
     private volatile Job mCurrentJob;
 
-    public JobService(String serverUrl, Handler handler, String packageName, String identity, Context context) {
+    public JobService(String serverUrl, Handler handler, Context context) {
         this.mServerUrl = serverUrl;
         this.mHandler = handler;
-        this.mPackageName = packageName;
-        this.mIdentity = identity;
         this.mContext = context;
         this.mQueue = new LinkedBlockingQueue<Job>();
     }
 
-    public JobService(String serverUrl, Handler handler, String packageName, String identity, Context context, Executor executor) {
+    public JobService(String serverUrl, Handler handler, Context context, Executor executor) {
         this.mServerUrl = serverUrl;
         this.mHandler = handler;
-        this.mPackageName = packageName;
-        this.mIdentity = identity;
         this.mContext = context;
         this.mExecutor = executor;
         this.mQueue = new LinkedBlockingQueue<Job>();
@@ -77,7 +74,7 @@ public class JobService extends Thread {
 
     public String enqueue(Job job) {
         String id = generateJobId();
-        job.mount(mServerUrl, mHandler, mPackageName, mIdentity, id, mContext);
+        job.mount(mServerUrl, mHandler, id, mContext);
         try {
             mQueue.add(job);
             return id;
@@ -86,9 +83,15 @@ public class JobService extends Thread {
         }
     }
 
+    public <T> T directlyRun(Job<T> job) throws BluefinException {
+        String id = generateJobId();
+        job.mount(mServerUrl, mHandler, id, mContext);
+        return job.perform();
+    }
+
     public void enqueueWithWatcher(Job job, BluefinJobWatcher watcher, BluefinCallbackAdapter adapter) {
         String id = generateJobId();
-        job.mount(mServerUrl, mHandler, mPackageName, mIdentity, id, mContext);
+        job.mount(mServerUrl, mHandler, id, mContext);
         adapter.addWatcher(id, watcher);
         try {
             mQueue.add(job);

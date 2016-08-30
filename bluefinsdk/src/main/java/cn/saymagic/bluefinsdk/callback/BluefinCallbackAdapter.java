@@ -14,6 +14,10 @@ public class BluefinCallbackAdapter implements BluefinCallback{
 
     private BluefinCallback mCallBack;
 
+    @Deprecated
+    /**
+     * do not support it
+     */
     public void setCustomCallBack(BluefinCallback customCallBack) {
         this.mCallBack = customCallBack;
     }

@@ -19,24 +19,28 @@ public class MainActivity extends AppCompatActivity implements BluefinCallback {
 
     private static final String TAG = "FishListActivity";
 
+    private static final String PACKAGE_EXAMPLE_ONE = "cn.saymagic.bluefindemo";
+    private static final String PACKAGE_EXAMPLE_TWO = "com.netease.mail";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bluefin.init(this, this, "http://10.242.8.21:2556/", Executors.newSingleThreadExecutor());
+        Bluefin.init(this, "http://10.242.8.21:2556/", Executors.newSingleThreadExecutor());
         setContentView(R.layout.activity_main);
     }
 
     public void listAllVersion(View view) {
-        Bluefin.listAllVersion("com.caoyanming.curriculum", new BluefinJobWatcher<List<BluefinApkData>>() {
-            @Override
-            public void onResult(List<BluefinApkData> bluefinApkDatas, Exception e) {
-                Toast.makeText(MainActivity.this, String.valueOf(bluefinApkDatas), Toast.LENGTH_LONG).show();
-            }
-        });
+//        Bluefin.listAllVersion(PACKAGE_EXAMPLE_ONE, new BluefinJobWatcher<List<BluefinApkData>>() {
+//            @Override
+//            public void onResult(List<BluefinApkData> bluefinApkDatas, Exception e) {
+//                Log.i(TAG, "onResult: " + String.valueOf(bluefinApkDatas) + " e: " + String.valueOf(e));
+//                Toast.makeText(MainActivity.this, String.valueOf(bluefinApkDatas), Toast.LENGTH_LONG).show();
+//            }
+//        });
     }
 
-    public void checkUpdate(View view) {
-        Bluefin.checkUpdate(new BluefinJobWatcher<BluefinApkData>() {
+    public void checkNewestVersion(View view) {
+        Bluefin.checkNewestVersion(PACKAGE_EXAMPLE_TWO, new BluefinJobWatcher<BluefinApkData>() {
             @Override
             public void onResult(BluefinApkData data, Exception e) {
                 Log.i(TAG, "onResult: " + String.valueOf(data) + " e: " + String.valueOf(e));
@@ -49,13 +53,14 @@ public class MainActivity extends AppCompatActivity implements BluefinCallback {
         Bluefin.listAllApks(new BluefinJobWatcher<List<BluefinApkData>>() {
             @Override
             public void onResult(List<BluefinApkData> bluefinApkDatas, Exception e) {
+                Log.i(TAG, "onResult: " + String.valueOf(bluefinApkDatas) + " e: " + String.valueOf(e));
                 Toast.makeText(MainActivity.this, String.valueOf(bluefinApkDatas), Toast.LENGTH_LONG).show();
             }
         });
     }
 
     public void simpleUpdate(View view) {
-        Bluefin.simpleUpdate();
+        Bluefin.simpleUpdate(PACKAGE_EXAMPLE_ONE);
     }
 
     @Override
