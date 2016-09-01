@@ -1,6 +1,6 @@
 ext {
     publicInfos = [
-            version : "1.0.12",
+            version : "1.0.13",
             group   : "cn.saymagic",
             siteUrl : "https://github.com/bluefinframework/bluefin-android-sdk/",
             gitUrl  : "https://github.com/bluefinframework/bluefin-android-sdk.git"
