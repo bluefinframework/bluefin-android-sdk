@@ -1,5 +1,11 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-
+ext {
+    publicInfos = [
+            version : "1.0.12",
+            group   : "cn.saymagic",
+            siteUrl : "https://github.com/bluefinframework/bluefin-android-sdk/",
+            gitUrl  : "https://github.com/bluefinframework/bluefin-android-sdk.git"
+    ]
+}
 buildscript {
     repositories {
         jcenter()

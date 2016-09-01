@@ -2,14 +2,17 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
-def siteUrl = 'https://github.com/bluefinframework/bluefin-android-sdk/'
-def gitUrl = 'https://github.com/bluefinframework/bluefin-android-sdk.git'
-version = '1.0.12'
-group = 'cn.saymagic'
+def infos = rootProject.ext.publicInfos;
+
+def siteUrl = "${infos.siteUrl}"
+def gitUrl = "${infos.gitUrl}"
+version =  "${infos.version}"
+group = "${infos.group}"
 
 configurations {
     deployerJars
 }
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.1"
@@ -21,6 +24,11 @@ android {
         versionCode 2
         versionName version
     }
+
+    lintOptions {
+        abortOnError false
+    }
+
     buildTypes {
         release {
             minifyEnabled false

@@ -2,10 +2,12 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
-def siteUrl = 'https://github.com/bluefinframework/bluefin-android-sdk/'
-def gitUrl = 'https://github.com/bluefinframework/bluefin-android-sdk.git'
-version = '1.0.12'
-group = 'cn.saymagic'
+def infos = rootProject.ext.publicInfos;
+
+def siteUrl = "${infos.siteUrl}"
+def gitUrl = "${infos.gitUrl}"
+version =  "${infos.version}"
+group = "${infos.group}"
 
 configurations {
     deployerJars

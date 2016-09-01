@@ -24,6 +24,8 @@ before_install:
 - git config --global user.email ${EMAIL}
 
 script:
+- "./gradlew :bluefinsdk:build"
+- "./gradlew :bluefinrxsdk:build"
 - "./gradlew assembleDebug"
 
 after_success:
@@ -34,7 +36,10 @@ deploy:
   skip_cleanup: true
   api_key:
     secure: ${ACCESS_TOKEN}
-  file: app/build/outputs/apk/app-debug.apk
+  file:
+    - app/build/outputs/apk/app-debug.apk
+    - bluefinrxsdk/build/outputs/aar/bluefinrxsdk-release.aar
+    - bluefinsdk/build/outputs/aar/bluefinrxsdk-release.aar
   on:
     tags: true
     all_branches: true

@@ -52,7 +52,7 @@ public class SimpleUpdateJob extends Job<Long> {
         DownloadManager downloadManager = (DownloadManager) mContext.getSystemService(mContext.DOWNLOAD_SERVICE);
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(apkData.getDownloadUrl()));
         request.setDestinationInExternalPublicDir("Bluefin", apkName);
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
         request.setMimeType("application/vnd.android.package-archive");
         request.setTitle(AppUtil.getApplicationName(mPakcageName, mContext) + mContext.getString(R.string.bluefin_have_new_version));
