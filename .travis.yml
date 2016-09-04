@@ -24,8 +24,6 @@ before_install:
 - git config --global user.email ${EMAIL}
 
 script:
-- "./gradlew :bluefinsdk:build"
-- "./gradlew :bluefinrxsdk:build"
 - "./gradlew assembleDebug"
 
 after_success:
