@@ -50,7 +50,7 @@ public class RetraceJob extends Job<String> {
         HttpURLConnection connection = null;
         try {
             url = new URL(URLUtil.join(mServerUrl, String.format(MAPPING_PATH, mPackageName, mIdentity)));
-            connection = (HttpURLConnection)url.openConnection();
+            connection = URLUtil.openConnection(url);
             connection.setRequestMethod("POST");
             connection.setDoOutput(true);
             connection.setDoInput(true);
@@ -58,18 +58,20 @@ public class RetraceJob extends Job<String> {
             outputStream.write(getOutputBytes());
             outputStream.flush();
             switch (connection.getResponseCode()) {
-                case HttpURLConnection.HTTP_OK:{
+                case HttpURLConnection.HTTP_OK: {
                     inputStream = url.openStream();
                     return IOUtil.readInputStreamAsString(inputStream);
-                }case HttpURLConnection.HTTP_NOT_FOUND:{
+                }
+                case HttpURLConnection.HTTP_NOT_FOUND: {
                     throw new BluefinNotFoundException();
-                }default:{
+                }
+                default: {
                     throw new Exception("bad request , the response code is " + connection.getResponseCode());
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new BluefinUnknowException(e);
-        }finally {
+        } finally {
             connection.disconnect();
             IOUtil.close(inputStream);
             IOUtil.close(outputStream);

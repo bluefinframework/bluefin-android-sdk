@@ -34,7 +34,7 @@ public class GetNewestVersionJob extends Job<BluefinApkData>{
         URL url = null;
         try {
             url = new URL(URLUtil.join(mServerUrl, String.format(UPDATE_PATH, mPackageName)));
-            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+            HttpURLConnection connection = URLUtil.openConnection(url);
             connection.connect();
             switch (connection.getResponseCode()) {
                 case HttpURLConnection.HTTP_OK:{

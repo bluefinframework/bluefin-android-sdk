@@ -29,7 +29,7 @@ public class ListApksJob extends Job<List<BluefinApkData>> {
         URL url = null;
         try {
             url = new URL(URLUtil.join(mServerUrl, LIST_ALL_APKS));
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            HttpURLConnection connection = URLUtil.openConnection(url);
             connection.connect();
             switch (connection.getResponseCode()) {
                 case HttpURLConnection.HTTP_OK: {

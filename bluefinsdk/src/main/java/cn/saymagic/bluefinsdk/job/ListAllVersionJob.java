@@ -38,7 +38,7 @@ public class ListAllVersionJob extends Job<List<BluefinApkData>>{
         String packageName = mAimPackageName;
         try {
             url = new URL(URLUtil.join(mServerUrl, String.format(LIST_ALL_VERSION, mAimPackageName)));
-            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+            HttpURLConnection connection = URLUtil.openConnection(url);
             connection.connect();
             switch (connection.getResponseCode()) {
                 case HttpURLConnection.HTTP_OK:{

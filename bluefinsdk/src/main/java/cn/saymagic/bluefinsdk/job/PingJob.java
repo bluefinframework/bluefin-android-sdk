@@ -26,7 +26,7 @@ public class PingJob extends Job<PingResult> {
         URL url = null;
         try {
             url = new URL(URLUtil.join(mServerUrl, PING));
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            HttpURLConnection connection = URLUtil.openConnection(url);
             connection.connect();
             switch (connection.getResponseCode()) {
                 case HttpURLConnection.HTTP_OK: {

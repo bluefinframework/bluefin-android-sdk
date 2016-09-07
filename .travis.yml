@@ -36,8 +36,6 @@ deploy:
     secure: ${ACCESS_TOKEN}
   file:
     - app/build/outputs/apk/app-debug.apk
-    - bluefinrxsdk/build/outputs/aar/bluefinrxsdk-release.aar
-    - bluefinsdk/build/outputs/aar/bluefinrxsdk-release.aar
   on:
     tags: true
     all_branches: true
