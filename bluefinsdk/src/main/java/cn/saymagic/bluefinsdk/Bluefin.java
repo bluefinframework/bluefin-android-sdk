@@ -172,7 +172,7 @@ public final class Bluefin {
      * @param packageName
      * @param identity
      * @return
-     * @throws Exception
+     * @throws BluefinException
      */
     public static String retrace(String s, String packageName, String identity) throws BluefinException {
         checkInit();
@@ -199,7 +199,7 @@ public final class Bluefin {
      * @param packageName
      * @param identity
      * @return
-     * @throws Exception
+     * @throws BluefinException
      */
     public static String retrace(File f, String packageName, String identity) throws BluefinException {
         checkInit();

@@ -1,1 +1,3 @@
-gradle bintrayUpload
+./gradlew :bluefinsdk:bintrayUpload
+./gradlew :bluefinrxsdk:bintrayUpload
+
